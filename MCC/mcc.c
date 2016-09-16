@@ -4,8 +4,8 @@
 
 typedef struct dEDGE
 {
-	struct dVERTEX headV;
-	struct dVERTEX tailV;
+	int edgeID;
+	struct dVERTEX* headVertex;
 	struct dEDGE* nextEdge;
 } tEDGE;
 
@@ -15,77 +15,78 @@ typedef struct dVERTEX
 	bool explored;
 	int numbOfEdges;
 	struct dEDGE* firstEdge;
+	struct dVERTEX* nextVertex;
 } tVERTEX;
 
-int addEdge(tVERTEX* graph, int vertexA, int vertexB){
-	tEDGE *e,*e1,*e2;
-
-	e=graph[vertexA-1].firstEdge; //Select first edge connected to the vertexA-1 in the Graph
-	while(e && e->nextEdge){	//Check if this egde exists or not, as well as if there is another edge connected to the original vertexA
-		e=e->nextEdge;	//If it does exist, verify the following edge. The objective is to find the last edge in the array
-	}
-	e1=malloc(sizeof(tEDGE));
-	e1->vertexID=vertexB;
-	e1->nextEdge=NULL;
-	if(e)
-		e->nextEdge=e1;		//Connect the edge vertexA/vertexB to the last part of the array of vertexA
-	else
-		graph[vertexA-1].firstEdge=e1;	//Connect the edge vertexA/vertexB as the first edge of the array of vertexA
-
-	e=graph[vertexB-1].firstEdge; //Select first edge connected to the vertexB-1 in the Graph
-	while(e && e->nextEdge){	//Check if this egde exists or not, as well as if there is another edge connected to the original vertexB
-		e=e->nextEdge;	//If it does exist, verify the following edge. The objective is to find the last edge in the array
-	}
-	e2= malloc(sizeof(tEDGE));
-	e2->vertexID=vertexA;
-	e2->nextEdge=NULL;
-	if(e)
-		e->nextEdge=e2;		//Connect the edge vertexA/vertexB to the last part of the array of vertexA
-	else
-		graph[vertexB-1].firstEdge=e2;	//Connect the edge vertexA/vertexB as the first edge of the array of vertexA
-
-	graph[vertexA-1].numberEdges++;
-	graph[vertexB-1].numberEdges++;
-	return 0;
-
+int printGraph(tVERTEX **graph){
+	int i;
+	tVERTEX *v;
+	tEDGE *e;
+	v=*graph;
+    while(v)
+    {
+       	printf("%d (%d)",v->vertexID, v->numbOfEdges);
+       	e=v->firstEdge;
+       	while(e)
+       	{
+           	printf("->%d",e->edgeID);
+           	e=e->nextEdge;
+       	}
+   		printf("\n");
+   		v=v->nextVertex;
+    }
+    return 0;
 }
 
 int readGraph(FILE *fp, tVERTEX **graph, int* vertexNumber){
 	int i, j, numbersInLine, arrayNumber[LINE_MAX_SIZE_CHAR];
 	char *ret1, line[LINE_MAX_SIZE_INT];
+	tVERTEX* v;
+	tEDGE* e;
 
-	while(fgets(line,sizeof(line),fp)!=NULL){
+	(*graph)=(tVERTEX*)malloc(sizeof(tVERTEX));
+	v=*graph;
+
+	if(fgets(line,sizeof(line),fp)!=NULL){
 		getNumbersFromString(line,arrayNumber);
-	}
-
-	while(fgets(line,sizeof(line),fp)!=NULL){
+		v->vertexID = arrayNumber[0];
+		v->explored = FALSE;
+		v->numbOfEdges=1;
+		v->nextVertex=NULL;
+		e=v->firstEdge;
+		e=(tEDGE*) malloc(sizeof(tEDGE));
+		e->edgeID = arrayNumber[1];
+		e->headVertex = v;
+		e->nextEdge = NULL;
 		(*vertexNumber)++;
+	}
+
+	while(fgets(line,sizeof(line),fp)!=NULL){
 		getNumbersFromString(line,arrayNumber);
-	}
 
-	(*graph)=(tVERTEX* )malloc((*vertexNumber)*sizeof(tVERTEX));
-
-	// ------- Add vertex to the Graph -------
-	rewind(fp);
-	i=0;
-	while(fgets(line,sizeof(line),fp)!=NULL){
-		numbersInLine=getNumbersFromString(line,arrayNumber);
-		(*graph)[i].vertexID=arrayNumber[0];
-		(*graph)[i].enable=TRUE;
-		(*graph)[i].numberEdges=0;
-		(*graph)[i].firstEdge=NULL;
-		i++;
-	}
-	// ------- Add edges to the Graph -------
-	rewind(fp);
-	while(fgets(line,sizeof(line),fp)!=NULL){
-		numbersInLine=getNumbersFromString(line,arrayNumber);
-		for(j=1;j<numbersInLine;j++){
-			//printf("arrayNumber[0]=%d; arrayNumber[%d]=%d\n", arrayNumber[0],j,arrayNumber[j]);
-			if(!checkEdgeExist(*graph,arrayNumber[0],arrayNumber[j]))
-				addEdge(*graph, arrayNumber[0],arrayNumber[j]);
+		if(v->vertexID == arrayNumber[0]){
+			(v->numbOfEdges)++;
+			e=e->nextEdge;		
 		}
+		else{
+			(*vertexNumber)++;
+			v=v->nextVertex;
+			v=(tVERTEX*) malloc(sizeof(tVERTEX));
+			v->vertexID = arrayNumber[0];
+			v->explored = FALSE;
+			v->numbOfEdges=1;
+			v->nextVertex=NULL;
+			printf("--VertexID %d\n", v->vertexID);
+
+			e=v->firstEdge;	
+		}
+
+		e=(tEDGE*) malloc(sizeof(tEDGE));
+		e->edgeID = arrayNumber[1];
+		e->headVertex = v;
+		e->nextEdge = NULL;
 	}
+	printf("%d\n\n",(*graph)->vertexID);
 
 	return 0;
 }
@@ -95,7 +96,7 @@ int main(int argc, char const *argv[])
 	FILE *fp;
 	char fileName[50];
 	int vertexNumber=0, activeVertexNumber=0, twiceEdgesNumber=0,randVertexA,randVertexB,i,min_Cut;
-	tVERTEX *graph;
+	tVERTEX* graph,*ini;
 
 	if(argc!=2){
 		printf("ERROR : This function only takes as parameter the name of the file to analyze - max 50 characters\n");
@@ -108,7 +109,14 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 
-	readGraph(fp,&graph,&vertexNumber);
+
+	
+	readGraph(fp, &graph,&vertexNumber);
+
+	printf("primer - %d\n", graph->vertexID);
+	printf("segundo - %d\n", graph->nextVertex->vertexID);
+
+	//printGraph(&graph);
 
 	return 0;
 }
