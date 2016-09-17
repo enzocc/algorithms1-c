@@ -41,52 +41,54 @@ int printGraph(tVERTEX **graph){
 int readGraph(FILE *fp, tVERTEX **graph, int* vertexNumber){
 	int i, j, numbersInLine, arrayNumber[LINE_MAX_SIZE_CHAR];
 	char *ret1, line[LINE_MAX_SIZE_INT];
-	tVERTEX* v;
-	tEDGE* e;
+	tVERTEX *v;
+	tEDGE *e;
 
 	(*graph)=(tVERTEX*)malloc(sizeof(tVERTEX));
 	v=*graph;
 
 	if(fgets(line,sizeof(line),fp)!=NULL){
 		getNumbersFromString(line,arrayNumber);
+		(*vertexNumber)++;
 		v->vertexID = arrayNumber[0];
 		v->explored = FALSE;
 		v->numbOfEdges=1;
 		v->nextVertex=NULL;
-		e=v->firstEdge;
+
 		e=(tEDGE*) malloc(sizeof(tEDGE));
 		e->edgeID = arrayNumber[1];
 		e->headVertex = v;
 		e->nextEdge = NULL;
-		(*vertexNumber)++;
+		v->firstEdge=e;
 	}
 
 	while(fgets(line,sizeof(line),fp)!=NULL){
 		getNumbersFromString(line,arrayNumber);
-
 		if(v->vertexID == arrayNumber[0]){
 			(v->numbOfEdges)++;
-			e=e->nextEdge;		
+
+			e->nextEdge=(tEDGE*) malloc(sizeof(tEDGE));
+			e->nextEdge->edgeID = arrayNumber[1];
+			e->nextEdge->headVertex = v;
+			e->nextEdge->nextEdge = NULL;
+			e=e->nextEdge;
 		}
 		else{
 			(*vertexNumber)++;
+			v->nextVertex=(tVERTEX*) malloc(sizeof(tVERTEX));
+			v->nextVertex->vertexID=arrayNumber[0];
+			v->nextVertex->explored=FALSE;
+			v->nextVertex->numbOfEdges=1;
+			v->nextVertex->nextVertex=NULL;
 			v=v->nextVertex;
-			v=(tVERTEX*) malloc(sizeof(tVERTEX));
-			v->vertexID = arrayNumber[0];
-			v->explored = FALSE;
-			v->numbOfEdges=1;
-			v->nextVertex=NULL;
-			printf("--VertexID %d\n", v->vertexID);
 
-			e=v->firstEdge;	
+			e=(tEDGE*) malloc(sizeof(tEDGE));
+			e->edgeID = arrayNumber[1];
+			e->headVertex = v;
+			e->nextEdge = NULL;
+			v->firstEdge=e;	
 		}
-
-		e=(tEDGE*) malloc(sizeof(tEDGE));
-		e->edgeID = arrayNumber[1];
-		e->headVertex = v;
-		e->nextEdge = NULL;
 	}
-	printf("%d\n\n",(*graph)->vertexID);
 
 	return 0;
 }
@@ -113,10 +115,7 @@ int main(int argc, char const *argv[])
 	
 	readGraph(fp, &graph,&vertexNumber);
 
-	printf("primer - %d\n", graph->vertexID);
-	printf("segundo - %d\n", graph->nextVertex->vertexID);
-
-	//printGraph(&graph);
+	printGraph(&graph);
 
 	return 0;
 }
