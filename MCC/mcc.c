@@ -4,7 +4,8 @@
 
 typedef struct dEDGE
 {
-	int edgeID;
+	//int edgeID;
+	struct dVERTEX* tailVertex;
 	struct dVERTEX* headVertex;
 	struct dEDGE* nextEdge;
 } tEDGE;
@@ -41,29 +42,62 @@ int printGraph(tVERTEX **graph){
 int readGraph(FILE *fp, tVERTEX **graph, int* vertexNumber){
 	int i, j, numbersInLine, arrayNumber[LINE_MAX_SIZE_CHAR];
 	char *ret1, line[LINE_MAX_SIZE_INT];
-	tVERTEX *v;
+	tVERTEX *v,*v1;
 	tEDGE *e;
 
-	(*graph)=(tVERTEX*)malloc(sizeof(tVERTEX));
-	v=*graph;
-
 	if(fgets(line,sizeof(line),fp)!=NULL){
+		(*graph)=(tVERTEX*)malloc(sizeof(tVERTEX));
+		v=*graph;
+
 		getNumbersFromString(line,arrayNumber);
 		(*vertexNumber)++;
 		v->vertexID = arrayNumber[0];
 		v->explored = FALSE;
 		v->numbOfEdges=1;
-		v->nextVertex=NULL;
+
+		v1==(tVERTEX*)malloc(sizeof(tVERTEX));
+		v->nextVertex=v1;
+		v->vertexID = arrayNumber[1];
+		v->explored = FALSE;
+		v->numbOfEdges=0;
+		(*vertexNumber)++;
 
 		e=(tEDGE*) malloc(sizeof(tEDGE));
-		e->edgeID = arrayNumber[1];
 		e->headVertex = v;
+		e->tailVertex = v1;
 		e->nextEdge = NULL;
 		v->firstEdge=e;
 	}
 
 	while(fgets(line,sizeof(line),fp)!=NULL){
 		getNumbersFromString(line,arrayNumber);
+		v=*graph;
+		v1=NULL;
+		while(v->nextVertex!=NULL){
+			if(v->vertexID == arrayNumber[0]){
+				(v->numbOfEdges)++;
+
+
+
+				
+				if(v1!=NULL){
+					e->nextEdge=(tEDGE*) malloc(sizeof(tEDGE));
+					e->nextEdge->headVertex = v;
+					e->nextEdge->headVertex = v1;
+					e->nextEdge->nextEdge = NULL;
+					e=e->nextEdge;
+				}
+				break;
+			}
+			if(v->vertexID == arrayNumber[1]){
+				v1=v;
+			}
+			v=v->nextVertex;
+		}		
+
+
+
+
 		if(v->vertexID == arrayNumber[0]){
 			(v->numbOfEdges)++;
 
