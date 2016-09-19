@@ -38,30 +38,21 @@ int printGraph(tVERTEX *graph, int vertexCount){
 
 int DFS(tVERTEX* node,int* globalTime, tVERTEX* leader, bool reverse){
 	tEDGE* e;
-	printf("aa\n");
+
 	node->explored=TRUE;
 	node->leader=leader;
 	if(reverse)
 		e=node->bwd;
 	else
 		e=node->fwd;
-	printf("bb\n");
-	printf("1. %d - Node: %d \n",(*globalTime), node->vertexID);
 	while(e){
-		printf("xx\n");
 		if(!(e->vertex->explored)){
-			printf("yy\n");
-			if(DFS(e->vertex,globalTime,leader,reverse)!=0){
-				printf("Error\n");
-			}
+			DFS(e->vertex,globalTime,leader,reverse);
 		}
-		printf("zz\n");
 		e=e->next;
 	}
-	printf("zz1\n");
 	(*globalTime)++;
 	node->finishTime=(*globalTime);
-	printf("2. %d - Node: %d \n",(*globalTime), node->vertexID);
 
 	return 0;
 }
@@ -155,7 +146,7 @@ int main(int argc, char const *argv[])
 	FILE *fp;
 	char fileName[50];
 	int vertexNumber=0, i;
-	tVERTEX* graph,*ini;
+	tVERTEX* graph;
 
 	if(argc!=2){
 		printf("ERROR : This function only takes as parameter the name of the file to analyze - max 50 characters\n");
@@ -170,7 +161,7 @@ int main(int argc, char const *argv[])
 
 	readGraph(fp, &graph,&vertexNumber);
 
-	DFS_Loop(graph,vertexNumber,FALSE);
+	DFS_Loop(graph,vertexNumber,TRUE);
 
 //	printGraph(graph, vertexNumber);
 
