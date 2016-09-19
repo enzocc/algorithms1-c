@@ -14,6 +14,8 @@ typedef struct dVERTEX
 	int vertexID;
 	bool explored;
 	int numbOfEdges;
+	int finishTime;
+	struct dVERTEX* leader;
 	struct dEDGE* firstEdge;
 } tVERTEX;
 
@@ -32,6 +34,37 @@ int printGraph(tVERTEX *graph, int vertexCount){
        	printf("\n");
     }
     return 0;
+}
+
+int DFS(tVERTEX* node,int* globalTime, tVERTEX* leader){
+	tEDGE* e;
+
+	node->explored=TRUE;
+	node->leader=leader;
+	e=node->firstEdge;
+	while(e){
+		if(!(e->tailVertex->explored)){
+			DFS(e->tailVertex,globalTime,leader);
+		}
+		e=e->nextEdge;
+	}
+	(*globalTime)++;
+	node->finishTime=(*globalTime);
+
+	return 0;
+}
+
+int DFS_Loop(tVERTEX* graph, int vertexNumber){
+	int globalEndTime=0,i;
+	tVERTEX* leader=NULL;
+
+	for(i=vertexNumber-1;i>=0;i--){
+		if(!graph[i].explored){
+			leader=&graph[i];
+			DFS(&graph[i],&globalEndTime,leader);
+		}
+	}
+	return 0;
 }
 
 /* The following function add the edge edgeID
@@ -73,12 +106,14 @@ int readGraph(FILE *fp, tVERTEX **graph, int* vertexNumber){
 	(*vertexNumber)=temp;
 
 	(*graph)=(tVERTEX*)malloc((*vertexNumber)*sizeof(tVERTEX));
-		
+
 	// ------- Add vertex to the Graph -------
 	for(i=0;i<temp;i++){
 		(*graph)[i].vertexID=i+1;
 		(*graph)[i].explored=FALSE;
 		(*graph)[i].numbOfEdges=0;
+		(*graph)[i].finishTime=0;;
+		(*graph)[i].leader=NULL;
 		(*graph)[i].firstEdge=NULL;
 	}
 
