@@ -4,9 +4,8 @@
 
 typedef struct dEDGE
 {
-	//int edgeID;
-	struct dVERTEX* tailVertex;
 	struct dVERTEX* headVertex;
+	struct dVERTEX* tailVertex;
 	struct dEDGE* nextEdge;
 } tEDGE;
 
@@ -16,114 +15,79 @@ typedef struct dVERTEX
 	bool explored;
 	int numbOfEdges;
 	struct dEDGE* firstEdge;
-	struct dVERTEX* nextVertex;
 } tVERTEX;
 
-int printGraph(tVERTEX **graph){
+int printGraph(tVERTEX *graph, int vertexCount){
 	int i;
-	tVERTEX *v;
 	tEDGE *e;
-	v=*graph;
-    while(v)
+    for(i=0;i<vertexCount;i++)
     {
-       	printf("%d (%d)",v->vertexID, v->numbOfEdges);
-       	e=v->firstEdge;
-       	while(e)
-       	{
-           	printf("->%d",e->edgeID);
-           	e=e->nextEdge;
-       	}
-   		printf("\n");
-   		v=v->nextVertex;
+        printf("%d (%d)",graph[i].vertexID, graph[i].numbOfEdges);
+        e=graph[i].firstEdge;
+        while(e)
+        {
+            printf("->%d",e->tailVertex->vertexID);
+            e=e->nextEdge;
+        }
+       	printf("\n");
     }
     return 0;
 }
 
+/* The following function add the edge edgeID
+ * to the vertex vertexID in the graph
+ */
+int addVertex(tVERTEX* graph, int vertexID, int edgeID){
+	tEDGE *e,*e1;
+
+	e=graph[vertexID-1].firstEdge;
+	while(e && e->nextEdge)
+		e=e->nextEdge;
+
+	e1=malloc(sizeof(tEDGE));
+	e1->headVertex=&graph[vertexID-1];
+	e1->tailVertex=&
+	graph[edgeID-1];
+	e1->nextEdge=NULL;
+	if(e)
+		e->nextEdge=e1;
+	else
+		graph[vertexID-1].firstEdge=e1;
+
+	graph[vertexID-1].numbOfEdges++;
+	return 0;
+}
+
 int readGraph(FILE *fp, tVERTEX **graph, int* vertexNumber){
-	int i, j, numbersInLine, arrayNumber[LINE_MAX_SIZE_CHAR];
+	int i=0, j, temp=0, arrayNumber[LINE_MAX_SIZE_CHAR];
 	char *ret1, line[LINE_MAX_SIZE_INT];
-	tVERTEX *v,*v1;
-	tEDGE *e;
 
-	if(fgets(line,sizeof(line),fp)!=NULL){
-		(*graph)=(tVERTEX*)malloc(sizeof(tVERTEX));
-		v=*graph;
-
-		getNumbersFromString(line,arrayNumber);
-		(*vertexNumber)++;
-		v->vertexID = arrayNumber[0];
-		v->explored = FALSE;
-		v->numbOfEdges=1;
-
-		v1==(tVERTEX*)malloc(sizeof(tVERTEX));
-		v->nextVertex=v1;
-		v->vertexID = arrayNumber[1];
-		v->explored = FALSE;
-		v->numbOfEdges=0;
-		(*vertexNumber)++;
-
-		e=(tEDGE*) malloc(sizeof(tEDGE));
-		e->headVertex = v;
-		e->tailVertex = v1;
-		e->nextEdge = NULL;
-		v->firstEdge=e;
-	}
-
+	// ------- Find number of vertex in the Graph -------
 	while(fgets(line,sizeof(line),fp)!=NULL){
 		getNumbersFromString(line,arrayNumber);
-		v=*graph;
-		v1=NULL;
-		while(v->nextVertex!=NULL){
-			if(v->vertexID == arrayNumber[0]){
-				(v->numbOfEdges)++;
+		if(temp<arrayNumber[0])
+			temp=arrayNumber[0];
+		if(temp<arrayNumber[1])
+			temp=arrayNumber[1];
+	}
+	(*vertexNumber)=temp;
 
-
-
-				
-				if(v1!=NULL){
-					e->nextEdge=(tEDGE*) malloc(sizeof(tEDGE));
-					e->nextEdge->headVertex = v;
-					e->nextEdge->headVertex = v1;
-					e->nextEdge->nextEdge = NULL;
-					e=e->nextEdge;
-				}
-				break;
-			}
-			if(v->vertexID == arrayNumber[1]){
-				v1=v;
-			}
-			v=v->nextVertex;
-		}		
-
-
-
-
-		if(v->vertexID == arrayNumber[0]){
-			(v->numbOfEdges)++;
-
-			e->nextEdge=(tEDGE*) malloc(sizeof(tEDGE));
-			e->nextEdge->edgeID = arrayNumber[1];
-			e->nextEdge->headVertex = v;
-			e->nextEdge->nextEdge = NULL;
-			e=e->nextEdge;
-		}
-		else{
-			(*vertexNumber)++;
-			v->nextVertex=(tVERTEX*) malloc(sizeof(tVERTEX));
-			v->nextVertex->vertexID=arrayNumber[0];
-			v->nextVertex->explored=FALSE;
-			v->nextVertex->numbOfEdges=1;
-			v->nextVertex->nextVertex=NULL;
-			v=v->nextVertex;
-
-			e=(tEDGE*) malloc(sizeof(tEDGE));
-			e->edgeID = arrayNumber[1];
-			e->headVertex = v;
-			e->nextEdge = NULL;
-			v->firstEdge=e;	
-		}
+	(*graph)=(tVERTEX*)malloc((*vertexNumber)*sizeof(tVERTEX));
+		
+	// ------- Add vertex to the Graph -------
+	for(i=0;i<temp;i++){
+		(*graph)[i].vertexID=i+1;
+		(*graph)[i].explored=FALSE;
+		(*graph)[i].numbOfEdges=0;
+		(*graph)[i].firstEdge=NULL;
 	}
 
+	// ------- Add vertex to the Graph -------
+	rewind(fp);
+	while(fgets(line,sizeof(line),fp)!=NULL){
+		getNumbersFromString(line,arrayNumber);
+		addVertex(*graph,arrayNumber[0],arrayNumber[1]);
+	}
 	return 0;
 }
 
@@ -145,11 +109,8 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 
-
-	
 	readGraph(fp, &graph,&vertexNumber);
-
-	printGraph(&graph);
+	printGraph(graph, vertexNumber);
 
 	return 0;
 }
