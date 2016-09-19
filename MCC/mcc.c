@@ -13,10 +13,9 @@ typedef struct dVERTEX
 	int vertexID;
 	bool explored;
 	int numbOfEdges;
-	int finishTime;
 	struct dVERTEX* leader;
-	struct dEDGE* fwd;
-	struct dEDGE* bwd;
+	struct dEDGE* fwd;	//List of vertex in direct order
+	struct dEDGE* bwd;	//List of vertex in reverse order
 } tVERTEX;
 
 int printGraph(tVERTEX *graph, int vertexCount){
@@ -36,7 +35,7 @@ int printGraph(tVERTEX *graph, int vertexCount){
     return 0;
 }
 
-int DFS(tVERTEX* node,int* globalTime, tVERTEX* leader, bool reverse){
+int DFS(tVERTEX* node,int* globalTime, tVERTEX* leader, tVERTEX **orderArray, bool reverse){
 	tEDGE* e;
 
 	node->explored=TRUE;
@@ -45,28 +44,44 @@ int DFS(tVERTEX* node,int* globalTime, tVERTEX* leader, bool reverse){
 		e=node->bwd;
 	else
 		e=node->fwd;
-	while(e){
-		if(!(e->vertex->explored)){
-			DFS(e->vertex,globalTime,leader,reverse);
+	while(e){//For all the edges
+		if(!(e->vertex->explored)){//if nor explored
+			DFS(e->vertex,globalTime,leader,orderArray,reverse);//Recurse DFS
 		}
 		e=e->next;
 	}
-	(*globalTime)++;
-	node->finishTime=(*globalTime);
+	
+	(*globalTime)++;	// During the reverse execution, it indicates the ending order.
+						// In the direct execution, it counts the number of items belonging to the leader
+	if(reverse)
+		orderArray[*globalTime-1]=node;//Only write in the orderArray, if we are executing in reverse mode
 
 	return 0;
 }
 
-int DFS_Loop(tVERTEX* graph, int vertexNumber, bool reverse){
+int DFS_Loop(tVERTEX* graph, int vertexNumber, tVERTEX **orderArray, bool reverse){
 	int globalEndTime=0,i;
 	tVERTEX* leader=NULL;
 
-	for(i=vertexNumber-1;i>=0;i--){
-		if(!graph[i].explored){
-			leader=&graph[i];
-			DFS(&graph[i],&globalEndTime,leader,reverse);
-		}
+	if(reverse){
+		for(i=vertexNumber-1;i>=0;i--)
+			if(!graph[i].explored){
+				leader=&graph[i];
+				DFS(&graph[i],&globalEndTime,leader,orderArray,reverse);
+			}
 	}
+	else{
+		for(i=vertexNumber-1;i>=0;i--)
+			if(!orderArray[i]->explored){
+				leader=orderArray[i];
+				globalEndTime=0;	//Restart to zero before discovering the nodes belonging to the leader.
+				DFS(orderArray[i],&globalEndTime,leader,orderArray,reverse);
+				//The following condition is used to print the biggest groups of nodes (minimum 150 elements)
+				if(globalEndTime>150)
+					printf("Leader: %d - Number Nodes: %d\n", leader->vertexID,globalEndTime);
+			}
+	}
+
 	return 0;
 }
 
@@ -126,7 +141,6 @@ int readGraph(FILE *fp, tVERTEX **graph, int* vertexNumber){
 		(*graph)[i].vertexID=i+1;
 		(*graph)[i].explored=FALSE;
 		(*graph)[i].numbOfEdges=0;
-		(*graph)[i].finishTime=0;;
 		(*graph)[i].leader=NULL;
 		(*graph)[i].fwd=NULL;
 		(*graph)[i].bwd=NULL;
@@ -146,7 +160,7 @@ int main(int argc, char const *argv[])
 	FILE *fp;
 	char fileName[50];
 	int vertexNumber=0, i;
-	tVERTEX* graph;
+	tVERTEX* graph, **orderArray;
 
 	if(argc!=2){
 		printf("ERROR : This function only takes as parameter the name of the file to analyze - max 50 characters\n");
@@ -161,15 +175,25 @@ int main(int argc, char const *argv[])
 
 	readGraph(fp, &graph,&vertexNumber);
 
-	DFS_Loop(graph,vertexNumber,TRUE);
+	orderArray=(tVERTEX**) malloc(vertexNumber*sizeof(tVERTEX*));
+
+	// ------- Launch routine in reverse order -------
+	DFS_Loop(graph,vertexNumber,orderArray,TRUE);
+
+	// ------- Restart all nodes as Non-Explored -------
+	for(i=0;i<vertexNumber;i++)
+		orderArray[i]->explored=FALSE;
+	
+	// ------- Launch routine in direct order -------
+	DFS_Loop(graph,vertexNumber,orderArray,FALSE);
 
 //	printGraph(graph, vertexNumber);
 
-	printf("Finish Time: ");
+/*	printf("Order Array: ");
 	for(i=0;i<vertexNumber;i++){
-		printf("%d ", graph[i].finishTime);
+		printf("%d ", orderArray[i]->vertexID);
 	}
-	printf("\n");
-	
+	printf("\n");*/
+
 	return 0;
 }
