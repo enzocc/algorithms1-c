@@ -4,9 +4,8 @@
 
 typedef struct dEDGE
 {
-	struct dVERTEX* headVertex;
-	struct dVERTEX* tailVertex;
-	struct dEDGE* nextEdge;
+	struct dVERTEX* vertex;
+	struct dEDGE* next;
 } tEDGE;
 
 typedef struct dVERTEX
@@ -16,7 +15,8 @@ typedef struct dVERTEX
 	int numbOfEdges;
 	int finishTime;
 	struct dVERTEX* leader;
-	struct dEDGE* firstEdge;
+	struct dEDGE* fwd;
+	struct dEDGE* bwd;
 } tVERTEX;
 
 int printGraph(tVERTEX *graph, int vertexCount){
@@ -25,11 +25,11 @@ int printGraph(tVERTEX *graph, int vertexCount){
     for(i=0;i<vertexCount;i++)
     {
         printf("%d (%d)",graph[i].vertexID, graph[i].numbOfEdges);
-        e=graph[i].firstEdge;
+        e=graph[i].fwd;
         while(e)
         {
-            printf("->%d",e->tailVertex->vertexID);
-            e=e->nextEdge;
+            printf("->%d",e->vertex->vertexID);
+            e=e->next;
         }
        	printf("\n");
     }
@@ -41,12 +41,12 @@ int DFS(tVERTEX* node,int* globalTime, tVERTEX* leader){
 
 	node->explored=TRUE;
 	node->leader=leader;
-	e=node->firstEdge;
+	e=node->fwd;
 	while(e){
-		if(!(e->tailVertex->explored)){
-			DFS(e->tailVertex,globalTime,leader);
+		if(!(e->vertex->explored)){
+			DFS(e->vertex,globalTime,leader);
 		}
-		e=e->nextEdge;
+		e=e->next;
 	}
 	(*globalTime)++;
 	node->finishTime=(*globalTime);
@@ -67,27 +67,38 @@ int DFS_Loop(tVERTEX* graph, int vertexNumber){
 	return 0;
 }
 
-/* The following function add the edge edgeID
- * to the vertex vertexID in the graph
+/* The following function add the edge edgeID to the
+ * fwd list of the vertex vertexID and the  vertex vertexID 
+ * to the bwd list of the vertex edgeID
  */
-int addVertex(tVERTEX* graph, int vertexID, int edgeID){
+int addVertex(tVERTEX* graph, int headVertex, int tailVertex){
 	tEDGE *e,*e1;
 
-	e=graph[vertexID-1].firstEdge;
-	while(e && e->nextEdge)
-		e=e->nextEdge;
+	e=graph[headVertex-1].fwd;
+	while(e && e->next)
+		e=e->next;
 
 	e1=malloc(sizeof(tEDGE));
-	e1->headVertex=&graph[vertexID-1];
-	e1->tailVertex=&
-	graph[edgeID-1];
-	e1->nextEdge=NULL;
+	e1->vertex=&graph[tailVertex-1];
+	e1->next=NULL;
 	if(e)
-		e->nextEdge=e1;
+		e->next=e1;
 	else
-		graph[vertexID-1].firstEdge=e1;
+		graph[headVertex-1].fwd=e1;
+	
+	e=graph[tailVertex-1].bwd;
 
-	graph[vertexID-1].numbOfEdges++;
+	while(e && e->next)
+		e=e->next;
+	e1=malloc(sizeof(tEDGE));
+	e1->vertex=&graph[headVertex-1];
+	e1->next=NULL;
+	if(e)
+		e->next=e1;
+	else
+		graph[tailVertex-1].bwd=e1;
+
+	graph[headVertex-1].numbOfEdges++;
 	return 0;
 }
 
@@ -114,7 +125,8 @@ int readGraph(FILE *fp, tVERTEX **graph, int* vertexNumber){
 		(*graph)[i].numbOfEdges=0;
 		(*graph)[i].finishTime=0;;
 		(*graph)[i].leader=NULL;
-		(*graph)[i].firstEdge=NULL;
+		(*graph)[i].fwd=NULL;
+		(*graph)[i].bwd=NULL;
 	}
 
 	// ------- Add vertex to the Graph -------
