@@ -36,32 +36,44 @@ int printGraph(tVERTEX *graph, int vertexCount){
     return 0;
 }
 
-int DFS(tVERTEX* node,int* globalTime, tVERTEX* leader){
+int DFS(tVERTEX* node,int* globalTime, tVERTEX* leader, bool reverse){
 	tEDGE* e;
-
+	printf("aa\n");
 	node->explored=TRUE;
 	node->leader=leader;
-	e=node->fwd;
+	if(reverse)
+		e=node->bwd;
+	else
+		e=node->fwd;
+	printf("bb\n");
+	printf("1. %d - Node: %d \n",(*globalTime), node->vertexID);
 	while(e){
+		printf("xx\n");
 		if(!(e->vertex->explored)){
-			DFS(e->vertex,globalTime,leader);
+			printf("yy\n");
+			if(DFS(e->vertex,globalTime,leader,reverse)!=0){
+				printf("Error\n");
+			}
 		}
+		printf("zz\n");
 		e=e->next;
 	}
+	printf("zz1\n");
 	(*globalTime)++;
 	node->finishTime=(*globalTime);
+	printf("2. %d - Node: %d \n",(*globalTime), node->vertexID);
 
 	return 0;
 }
 
-int DFS_Loop(tVERTEX* graph, int vertexNumber){
+int DFS_Loop(tVERTEX* graph, int vertexNumber, bool reverse){
 	int globalEndTime=0,i;
 	tVERTEX* leader=NULL;
 
 	for(i=vertexNumber-1;i>=0;i--){
 		if(!graph[i].explored){
 			leader=&graph[i];
-			DFS(&graph[i],&globalEndTime,leader);
+			DFS(&graph[i],&globalEndTime,leader,reverse);
 		}
 	}
 	return 0;
@@ -142,7 +154,7 @@ int main(int argc, char const *argv[])
 {
 	FILE *fp;
 	char fileName[50];
-	int vertexNumber=0, activeVertexNumber=0, twiceEdgesNumber=0,randVertexA,randVertexB,i,min_Cut;
+	int vertexNumber=0, i;
 	tVERTEX* graph,*ini;
 
 	if(argc!=2){
@@ -157,7 +169,16 @@ int main(int argc, char const *argv[])
 	}
 
 	readGraph(fp, &graph,&vertexNumber);
-	printGraph(graph, vertexNumber);
 
+	DFS_Loop(graph,vertexNumber,FALSE);
+
+//	printGraph(graph, vertexNumber);
+
+	printf("Finish Time: ");
+	for(i=0;i<vertexNumber;i++){
+		printf("%d ", graph[i].finishTime);
+	}
+	printf("\n");
+	
 	return 0;
 }
