@@ -1,58 +1,83 @@
 #include "stdio.h"
 #include "stdlib.h"
+#include "utilities.h"
 
 typedef struct heap{
-	int data;
-	int ID;
-	struct heap *next;
-} tHeap:
+	int lastIndex;
+	int maxSize;
+	int* hElem;
+} tHeap;
 
+int heapGet(tHeap* heap){
+	int ret,i,min_Index;	
+	ret = heap->hElem[0];
+	heap->hElem[0] = heap->hElem[heap->lastIndex-1];
 
-*tHeap heap_gotoIndex(tHeap* heap, int pos){
-	tHeap *h;
-	h = heap;
-	while(count=!pos){
-		h=h->next;
+	(heap->lastIndex)--;
+
+	for(i=0;i<=(heap->lastIndex-3)/2;i++){
+		if(heap->hElem[2*i+1]<heap->hElem[2*i+2])
+			min_Index=2*i+1;
+		else
+			min_Index=2*i+2;
+
+		if(heap->hElem[i]>heap->hElem[min_Index])
+			arraySwap(&(heap->hElem),i,min_Index);
+		else
+			return ret;
 	}
-	return h;
+	return ret;
 }
 
-int heap_moveLasttoFirst(tHeap** heap, int index){
-	tHeap *h, *h1;
-	h = heap_gotoIndex(*heap,index-2);		//Runs un O(n) time
-	h1 = *heap;
+int heapInsert(tHeap* heap, int new){
+	int i;
+	heap->hElem[heap->lastIndex] = new;
+	(heap->lastIndex)++;
 
-	*heap = h->next;
-	free(h1);
-	h->next=NULL;
+	for(i=heap->lastIndex-1;i>=1;i--){
+		if(heap->hElem[i]<heap->hElem[(i-1)/2])
+			arraySwap(&(heap->hElem),i,(i-1)/2);
+		else
+			return 0;
+	}
+
 	return 0;
 }
 
-int heap_getSize(tHeap heap){
-	tHeap *h;
-	int count=0;
+int main(int argc, char const *argv[])
+{
+	tHeap test;
+	int array[7],i;
 
-	h = heap;
-	while(h){
-		h = h->next;
-		count ++;
-	}
-
-	return count;
-}
-
-int heap_getMin(tHeap** heap){
-	tHeap *h;
-	int ret,size;
+	array[0]=1;
+	array[1]=4;
+	array[2]=3;
+	array[3]=6;
+	array[4]=9;
+	array[5]=5;
+	array[6]=7;
 	
-	h = *tHeap;
-	ret=h->data;
+	test.maxSize=7;
+	test.lastIndex=7;
+	test.hElem = array;
 
-	size = heap_getSize(*heap);
-	
-	heap_moveLasttoFirst(heap);
-	
-	
+	printf("min Elem (1) : %d\n", heapGet(&test));
+	printf("min Elem (2) : %d\n", heapGet(&test));
+	printf("min Elem (3) : %d\n", heapGet(&test));
+	printf("min Elem (4) : %d\n", heapGet(&test));
+	printf("min Elem (5) : %d\n", heapGet(&test));
 
-	return ret;
+	printf("Remaining Elements:");
+	for(i=0;i<test.lastIndex;i++)
+		printf(" %d ", test.hElem[i]);
+	printf("\n");
+
+	heapInsert(&test,2);
+
+	printf("Remaining Elements:");
+	for(i=0;i<test.lastIndex;i++)
+		printf(" %d ", test.hElem[i]);
+	printf("\n");
+	
+	return 0;
 }
