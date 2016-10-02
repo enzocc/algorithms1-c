@@ -34,13 +34,22 @@ int heapInsert(tHeap* heap, int new){
 	heap->hElem[heap->lastIndex] = new;
 	(heap->lastIndex)++;
 
-	for(i=heap->lastIndex-1;i>=1;i--){
-		if(heap->hElem[i]<heap->hElem[(i-1)/2])
+	for(i=heap->lastIndex-1;i>=3;){
+		if(heap->hElem[i]<heap->hElem[(i-1)/2]){
 			arraySwap(&(heap->hElem),i,(i-1)/2);
+			i=(i-1)/2;
+		}
 		else
 			return 0;
 	}
 
+	if(heap->hElem[i]<heap->hElem[0])
+		arraySwap(&(heap->hElem),i,0);
+
+	return 0;
+}
+
+int heapDelete(tHeap* heap, int index){
 	return 0;
 }
 
@@ -49,7 +58,7 @@ int main(int argc, char const *argv[])
 	tHeap test;
 	int array[7],i;
 
-	array[0]=1;
+	array[0]=2;
 	array[1]=4;
 	array[2]=3;
 	array[3]=6;
@@ -72,7 +81,14 @@ int main(int argc, char const *argv[])
 		printf(" %d ", test.hElem[i]);
 	printf("\n");
 
-	heapInsert(&test,2);
+	heapInsert(&test,4);
+
+	printf("Remaining Elements:");
+	for(i=0;i<test.lastIndex;i++)
+		printf(" %d ", test.hElem[i]);
+	printf("\n");
+
+	heapInsert(&test,1);
 
 	printf("Remaining Elements:");
 	for(i=0;i<test.lastIndex;i++)
