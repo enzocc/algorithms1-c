@@ -8,60 +8,63 @@ typedef struct heap{
 	int* hElem;
 } tHeap;
 
-int heapGet(tHeap* heap){
+
+int heapDelete(tHeap* heap, int index){
 	int ret,i,min_Index;	
-	ret = heap->hElem[0];
-	heap->hElem[0] = heap->hElem[heap->lastIndex-1];
+	ret = heap->hElem[index];
+	heap->hElem[index] = heap->hElem[heap->lastIndex];
 	(heap->lastIndex)--;
 
-	for(i=0;i<=(heap->lastIndex-3)/2;i=min_Index){
+	for(i=index;i<=(heap->lastIndex-2)/2;i=min_Index){
 		if(heap->hElem[2*i+1]<heap->hElem[2*i+2])
 			min_Index=2*i+1;
 		else
 			min_Index=2*i+2;
-
 		if(heap->hElem[i]>heap->hElem[min_Index])
 			arraySwap(&(heap->hElem),i,min_Index);
 		else
 			return ret;
 	}
+/*
+The following routine counts the case of uncomplete trees
+The last root with children, will only have one, so the previous FOR loop
+won't consider this root (will only count until the previous one, with two children)
+The following if sentence, evaluate the existence (or not) of a single parent.
+*/
+	if((2*i+1)==heap->lastIndex)		
+		if(heap->hElem[i+1]>heap->hElem[2*i+1])
+			arraySwap(&(heap->hElem),i,2*i+1);
 	return ret;
+}
+
+int heapGet(tHeap* heap){
+	return heapDelete(heap,0);
 }
 
 int heapInsert(tHeap* heap, int new){
 	int i;
-	heap->hElem[heap->lastIndex] = new;
 	(heap->lastIndex)++;
+	heap->hElem[heap->lastIndex] = new;
 
-	for(i=heap->lastIndex-1;i>=3;i=(i-1)/2){
+	for(i=heap->lastIndex;i>=1;i=(i-1)/2){
 		if(heap->hElem[i]<heap->hElem[(i-1)/2])
 			arraySwap(&(heap->hElem),i,(i-1)/2);
 		else
 			return 0;
 	}
-
-	if(heap->hElem[i]<heap->hElem[0])
-		arraySwap(&(heap->hElem),i,0);
-
 	return 0;
 }
 
 int heapify(tHeap* heap){
-	int i;
-	
-	for(i=heap->lastIndex-1;i>=3;i--)
-		if(heap->hElem[i]<heap->hElem[(i-1)/2])
-			arraySwap(&(heap->hElem),i,(i-1)/2);
-	if(heap->hElem[2]<heap->hElem[0])
-		arraySwap(&(heap->hElem),2,0);
-	if(heap->hElem[1]<heap->hElem[0])
-		arraySwap(&(heap->hElem),1,0);
-	
-	return 0;
-}
-
-int heapDelete(tHeap* heap, int index){
-
+	int i,min_Index;
+	for(i=(heap->lastIndex-2)/2;i>=0;i--){
+		if(heap->hElem[2*i+1]<heap->hElem[2*i+2])
+			min_Index=2*i+1;
+		else
+			min_Index=2*i+2;
+		if(heap->hElem[i]>heap->hElem[min_Index])
+			arraySwap(&(heap->hElem),i,min_Index);
+	}
 	return 0;
 }
 
@@ -91,12 +94,12 @@ int main(int argc, char const *argv[])
 	array[10]=22;
 
 	test.maxSize=11;
-	test.lastIndex=11;
+	test.lastIndex=10;
 	test.hElem = array;
 
 	heapify(&test);
 	printf("All Elements:");
-	for(i=0;i<test.lastIndex;i++)
+	for(i=0;i<=test.lastIndex;i++)
 		printf(" %d ", test.hElem[i]);
 	printf("\n");
 
@@ -107,23 +110,24 @@ int main(int argc, char const *argv[])
 	printf("min Elem (5) : %d\n", heapGet(&test));
 
 	printf("Remaining Elements:");
-	for(i=0;i<test.lastIndex;i++)
+	for(i=0;i<=test.lastIndex;i++)
+		printf(" %d ", test.hElem[i]);
+	printf("\n");
+
+	heapInsert(&test,16);
+	printf("Remaining Elements:");
+	for(i=0;i<=test.lastIndex;i++)
 		printf(" %d ", test.hElem[i]);
 	printf("\n");
 
 	heapInsert(&test,4);
-
 	printf("Remaining Elements:");
-	for(i=0;i<test.lastIndex;i++)
+	for(i=0;i<=test.lastIndex;i++)
 		printf(" %d ", test.hElem[i]);
 	printf("\n");
 
-	heapInsert(&test,1);
-
-	printf("Remaining Elements:");
-	for(i=0;i<test.lastIndex;i++)
-		printf(" %d ", test.hElem[i]);
-	printf("\n");
+	printf("min Elem (6) : %d\n", heapGet(&test));
+	printf("min Elem (7) : %d\n", heapGet(&test));
 	
 	return 0;
 }
