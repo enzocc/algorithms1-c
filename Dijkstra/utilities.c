@@ -17,15 +17,17 @@ int getNumbersFromString(char* arrayChar, int *arrayNumber){
 	temp=arrayChar;
 	while((arrayNumber[i]=(unsigned int) strtol(temp,&ret1,10))!=0){
 		temp=ret1;
+		if(*temp==',')
+			(temp)++;
 		i++;
 	}
 	return i;	//Number of elements in the string
 }
 
-int arraySwap(int **array, int indexA, int indexB){
-	int temp=(*array)[indexA];
-	(*array)[indexA]=(*array)[indexB];
-	(*array)[indexB]= temp;
+int arraySwap(tVERTEX **array, int indexA, int indexB){
+	tVERTEX* temp=array[indexA];
+	array[indexA]=array[indexB];
+	array[indexB]= temp;
 	return 0;
 }
 
