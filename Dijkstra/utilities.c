@@ -1,6 +1,10 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "utilities.h"
+#ifndef LIBDEF
+	#define LIBDEF
+	#include "stdio.h"
+	#include "stdlib.h"
+	#include "utilities.h"
+	#include "heap.h"
+#endif
 
 int printArray(int size,int* array, char* message){
 	printf("%s: ", message);

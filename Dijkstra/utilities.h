@@ -16,9 +16,10 @@ typedef struct dEDGE
 typedef struct dVERTEX
 {
 	int vertexID;
-	bool explored;
 	int numbOfEdges;
+	bool explored;
 	int key;
+	int order;
 	struct dEDGE* vtx;
 } tVERTEX;
 
