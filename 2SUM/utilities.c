@@ -4,12 +4,13 @@
 	#include "stdlib.h"
 	#include "utilities.h"
 	#include "time.h"
+	#include "limits.h"
 #endif
 
-int printArray(int size,int* array, char* message){
+int printArray(int size,long long* array, char* message){
 	printf("%s: ", message);
 	for (int i=0;i<size;i++){
-		printf("%d ", array[i]);
+		printf("%lld ", array[i]);
 	}
 	printf("\n");
 	return 0;
@@ -26,8 +27,8 @@ int getNumbersFromString(char* arrayChar, int *arrayNumber){
 	return i;	//Number of elements in the string
 }
 
-int arraySwap(int **array, int indexA, int indexB){
-	int temp=(*array)[indexA];
+int arraySwap(long long **array, int indexA, int indexB){
+	long long temp=(*array)[indexA];
 	(*array)[indexA]=(*array)[indexB];
 	(*array)[indexB]= temp;
 	return 0;
@@ -52,7 +53,7 @@ int getNumFromFile(FILE* fp){
 	return atoi(fgets(temp,sizeof(temp),fp));;
 }
 
-int readArray(FILE* fp, int* arraySize, int** array){
+int readArray(FILE* fp, int* arraySize, long long** array){
 	int i;
 	char temp[NUMBER_MAX_DIGIT];
 	
@@ -61,11 +62,11 @@ int readArray(FILE* fp, int* arraySize, int** array){
 	} while(fgets(temp,sizeof(temp),fp)!=NULL);
 	
 	(*arraySize)--;
-	*array= malloc((*arraySize)*sizeof(int));
+	*array= malloc((*arraySize)*sizeof(long long));
 	rewind(fp);
 
 	for(i=0;i<(*arraySize);i++){
-		(*array)[i]=atoi(fgets(temp,sizeof(temp),fp));
+		(*array)[i]=atoll(fgets(temp,sizeof(temp),fp));
 	}
 	
 	return 0;

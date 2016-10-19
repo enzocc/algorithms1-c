@@ -4,20 +4,21 @@
 	#include "stdlib.h"
 	#include "utilities.h"
 	#include "time.h"
+	#include "limits.h"
 #endif
 
-int selectPivot(int**array, int minIndex, int maxIndex){//Pivot is a random number between maxIndex and minIndex
+int selectPivot(int minIndex, int maxIndex){//Pivot is a random number between maxIndex and minIndex
 	return rand()%(maxIndex-minIndex) + minIndex;
 }
 
-int organize(int** array, int minIndex, int maxIndex){
+int organize(long long** array, int minIndex, int maxIndex){
 	int i=minIndex+1,j=minIndex+1,pivotIndex;
 	int count=maxIndex-minIndex;		//Number of comparisons: Pivot with (arraySize -1) elements
 	
 	if(maxIndex==minIndex){ 			//Base case: Array of one element
 		return 0;
 	}
-	if((pivotIndex=selectPivot(array,minIndex,maxIndex))!=minIndex)
+	if((pivotIndex=selectPivot(minIndex,maxIndex))!=minIndex)
 		arraySwap(array,pivotIndex,minIndex);
 
 	for(j=minIndex+1;j<=maxIndex;j++){
@@ -38,7 +39,7 @@ int organize(int** array, int minIndex, int maxIndex){
 	return count;
 }
 
-bool binarySearch(int* array, int arraySize, int lookingFor){
+bool binarySearch(long long* array, int arraySize, long long lookingFor){
 	if((lookingFor>array[arraySize-1])||(lookingFor<array[0]))
 		return FALSE;
 
@@ -63,7 +64,8 @@ bool binarySearch(int* array, int arraySize, int lookingFor){
 
 int main(int argc, char const *argv[])
 {
-	int arraySize = 0, *array,*array_noDup,size_noDup, count=0,i,j,toLook;
+	int arraySize = 0,size_noDup, count=0,i,j;
+	long long *array,*array_noDup, toLook;
 	bool exit;
 	FILE *fp;
 	char fileName[50];
@@ -83,7 +85,7 @@ int main(int argc, char const *argv[])
 	readArray(fp,&arraySize, &array);
 	organize(&array,0,arraySize-1);
 
-	array_noDup=malloc(arraySize*sizeof(int));
+	array_noDup=malloc(arraySize*sizeof(long long));
 
 	array_noDup[0]=array[0];
 	size_noDup=1;
@@ -92,25 +94,21 @@ int main(int argc, char const *argv[])
 			array_noDup[size_noDup]=array[i];
 			size_noDup++;
 		}
-		//else
-			//printf("equal!: %d\n", array[i]);
 	}
-	//printArray(size_noDup,array_noDup, "Ordered Array, without duplicates");
 	printf("Size of noDup:%d\n",size_noDup);
-
+	
 	for(j=-10000;j<10001;j++){
 		i=0;
 		exit=FALSE;
 		while(exit==FALSE){
 			toLook=j-array_noDup[i];
-			//printf("suma=%d => Current element: %d, looking for: %d\n",j,array[i],toLook);
 			if(array_noDup[i]==toLook){
 				exit=TRUE;
 			}
 			else if(binarySearch(array_noDup,size_noDup,toLook)){
 				count++;
 				exit = TRUE;
-				//printf("Target SUM: %d, Evaluating: %d\n", j, array[i]);
+				printf("suma=%d => Current element: %d, looking for: %d\n",j,array[i],toLook);
 			}
 			i++;
 			if(i==size_noDup)
