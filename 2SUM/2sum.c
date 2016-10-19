@@ -38,45 +38,32 @@ int organize(int** array, int minIndex, int maxIndex){
 	return count;
 }
 
-bool binarySearch(int* array, int arraySize, int lookingFor, int* diffThanAddr){
+bool binarySearch(int* array, int arraySize, int lookingFor){
 	if(arraySize == 1){
 		if((*array)!=lookingFor)
 			return FALSE;
-		else{
-			if(array == diffThanAddr)
-				return FALSE;
-			else
-				return TRUE;
-		}
+		else
+			return TRUE;
 	}
 
 	if(array[arraySize/2]==lookingFor){
-		if(&(array[arraySize/2])!=diffThanAddr)
-			return TRUE;
-		else{
-			if(array[arraySize/2-1]==lookingFor)
-				return TRUE;
-			else if(array[arraySize/2+1]==lookingFor)
-				return TRUE;
-			else 
-				return FALSE;
-		}
+		return TRUE;
 	}
 	else{
 		if(array[arraySize/2]<lookingFor){
 			//printf("HOLA 1 - %d\n", arraySize/2);
-			return binarySearch(&array[arraySize/2], arraySize - arraySize/2, lookingFor, diffThanAddr);
+			return binarySearch(&array[arraySize/2], arraySize - arraySize/2, lookingFor);
 		}
 		else{
 			//printf("HOLA 2 - %d\n", arraySize - arraySize/2);
-			return binarySearch(array, arraySize/2, lookingFor,diffThanAddr);
+			return binarySearch(array, arraySize/2, lookingFor);
 		}
 	}
 }
 
 int main(int argc, char const *argv[])
 {
-	int arraySize = 0, *array,count=0,i,j;
+	int arraySize = 0, *array,count=0,i,j,toLook;
 	bool exit;
 	FILE *fp;
 	char fileName[50];
@@ -101,12 +88,23 @@ int main(int argc, char const *argv[])
 		i=0;
 		exit=FALSE;
 		while(exit==FALSE){
-			if(binarySearch(array,arraySize,j-array[i],&(array[i]))){
-				//if(array[i]!=j-array[i]){
+			toLook=j-array[i];
+			if(array[i]==toLook){
+				if(i>0 && (array[i-1]==toLook)){
 					count++;
-					exit = TRUE;
-					//printf("suma=%d => Current element: %d, looking for: %d\n",j,array[i],j-array[i]);
-				//}
+					exit=TRUE;
+				}
+				else if (i<arraySize-1 && (array[i+1]==toLook)){
+					count++;
+					exit=TRUE;	
+				}
+				else
+					exit=TRUE;
+			}
+			else if(binarySearch(array,arraySize,toLook)){
+				count++;
+				exit = TRUE;
+				printf("suma=%d => Current element: %d, looking for: %d\n",j,array[i],j-array[i]);
 			}
 			i++;
 			if(i==arraySize)
