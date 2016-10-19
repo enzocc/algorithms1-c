@@ -104,10 +104,10 @@ int main(int argc, char const *argv[])
 		while(exit==FALSE){
 			toLook=j-array_noDup[i];
 			//printf("suma=%d => Current element: %d, looking for: %d\n",j,array[i],toLook);
-//			if(array_noDup[i]==toLook){
-//				exit=TRUE;
-//			}
-			/*else*/ if(binarySearch(array_noDup,size_noDup,toLook)){
+			if(array_noDup[i]==toLook){
+				exit=TRUE;
+			}
+			else if(binarySearch(array_noDup,size_noDup,toLook)){
 				count++;
 				exit = TRUE;
 				//printf("Target SUM: %d, Evaluating: %d\n", j, array[i]);
