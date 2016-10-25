@@ -2,6 +2,16 @@
 #include "stdlib.h"
 #include "math.h"
 
+int getReal
+Size(long long *num, int falseSize){
+	int i;
+	for(i=falseSize-1; i>=0;i--){
+		if(num[i]!=0)
+			return i+1;
+	}
+	return 0;
+}
+
 int sum(long long *num1, long long *num2, int size, long long* res){
 	int i;
 	res[0]=*num1 + *num2;
@@ -32,6 +42,7 @@ int prod(long long *num1, long long *num2, int size, long long* res){
 
 	long long resSum1[size],resSum2[size],prod_resSum[2*size], prodLow[size], prodMid[2*size], prodHigh[size];
 	long long difTemp[2*size];
+	int size1,size2;
 
 	
 	if(size==1){
@@ -49,10 +60,17 @@ int prod(long long *num1, long long *num2, int size, long long* res){
 
 	sum(&num1[0],&num1[size/2],size/2, resSum1);
 	sum(&num2[0],&num2[size/2],size/2, resSum2);
-	prod(resSum1,resSum2,2*size,prod_resSum);
+	size1=getRealSize(resSum1,size);
+	size2=getRealSize(resSum2,size);
+	if(size1>size2)
+		prod(resSum1,resSum2,2*size1,prod_resSum);
+	else
+		prod(resSum1,resSum2,2*size2,prod_resSum);
 
-	dif(prod_resSum,prodLow,2*size,difTemp);
-	dif(difTemp,prodHigh,2*size,prodMid);
+	size1=getRealSize(prod_resSum,2*size);
+
+	dif(prod_resSum,prodLow,size1,difTemp);
+	dif(difTemp,prodHigh,size1,prodMid);
 	printf("ProdMid= %lld - %lld\n",prodMid[1],prodMid[0]);
 
 
