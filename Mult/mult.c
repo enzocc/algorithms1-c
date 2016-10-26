@@ -181,11 +181,11 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 		if(i==-1)
 			*size_ans = 1;
 
-		/*printf(" ------- Result (%d): ",*size_ans);
+		printf(" ------- Result (%d): ",*size_ans);
 		for(i=3;i>=0;i--){
 			printf(" %lld",ans[i]);
 		}
-		printf("\n");*/
+		printf("\n");
 	}
 
 	if (size_inp == 4){
@@ -212,7 +212,7 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 		ans[1]=((size_prodLow>1)?prodLow[1]:0);
 		
 
-		ans[2]=prodMid[0]+((size_prodLow>2)?prodLow[2]:0)+carry;
+		ans[2]=prodMid[0]+((size_prodLow>2)?prodLow[2]:0);
 		carry=ans[2]/100000000;
 		ans[2]=ans[2]%100000000;
 
@@ -235,35 +235,6 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 		ans[6]=ans[6]%100000000;
 
 		ans[7]=((size_prodHigh>3)?prodHigh[3]:0)+carry;
-		carry=ans[7]/100000000;
-		ans[7]=ans[7]%100000000;
-
-		/*ans[0]=prodLow[0];
-		ans[1]=prodMid[0]+((size_prodLow>1)?prodLow[1]:0);
-		carry=ans[1]/100000000;
-		ans[1]=ans[1]%100000000;
-
-		ans[2]=prodHigh[0]+((size_prodMid>1)?prodMid[1]:0)+((size_prodLow>2)?prodLow[2]:0)+carry;
-		carry=ans[2]/100000000;
-		ans[2]=ans[2]%100000000;
-
-		ans[3]=((size_prodHigh>1)?prodHigh[1]:0)+((size_prodMid>2)?prodMid[2]:0)+((size_prodLow>3)?prodLow[3]:0)+carry;
-		carry=ans[3]/100000000;
-		ans[3]=ans[3]%100000000;
-
-		ans[4]=((size_prodHigh>2)?prodHigh[2]:0)+((size_prodMid>3)?prodMid[3]:0)+carry;
-		carry=ans[4]/100000000;
-		ans[4]=ans[4]%100000000;
-
-		ans[5]=((size_prodHigh>3)?prodHigh[3]:0)+((size_prodMid>4)?prodMid[4]:0)+carry;
-		carry=ans[5]/100000000;
-		ans[5]=ans[5]%100000000;
-
-		ans[6]=((size_prodHigh>4)?prodHigh[4]:0)+((size_prodMid>5)?prodMid[5]:0)+carry;
-		carry=ans[6]/100000000;
-		ans[6]=ans[6]%100000000;
-
-		ans[7]=carry;*/
 
 		for(i=7;i>=0;i--){
 			if(ans[i]!=0){
