@@ -88,39 +88,39 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 	prod(&num1[0],&num2[0],size_inp/2,prodLow, &size_prodLow); // ---- Low
 	// -----------------------------------
 	correctIndex(&size_prodLow);
-	printf("ProdLow(%d)= ",size_prodLow);
+	/*printf("ProdLow(%d)= ",size_prodLow);
 	for(i=size_prodLow-1;i>=0;i--){
 		printf("%lld ",prodLow[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 	// -----------------------------------
 	prod(&num1[size_inp/2],&num2[size_inp/2],size_inp/2,prodHigh,&size_prodHigh); // ---- High
 	// -----------------------------------
 	correctIndex(&size_prodHigh);
-	printf("ProdHigh(%d)= ", size_prodHigh);
+	/*printf("ProdHigh(%d)= ", size_prodHigh);
 	for(i=size_prodHigh-1;i>=0;i--){
 		printf("%lld ",prodHigh[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 	// -----------------------------------
 	sum(&num1[0],&num1[size_inp/2],size_inp/2, resSum1, &size_resSum1);
 	// -----------------------------------
 	correctIndex(&size_resSum1);
-	printf("ResSum1(%d)= ", size_resSum1);
+	/*printf("ResSum1(%d)= ", size_resSum1);
 	for(i=size_resSum1-1;i>=0;i--){
 		printf("%lld ",resSum1[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 	// -----------------------------------
 	sum(&num2[0],&num2[size_inp/2],size_inp/2, resSum2, &size_resSum2);
 	// -----------------------------------
 	correctIndex(&size_resSum2);
-	printf("ResSum2(%d)= ",size_resSum2);
+	/*printf("ResSum2(%d)= ",size_resSum2);
 	for(i=size_resSum2-
 		1;i>=0;i--){
 		printf("%lld ",resSum2[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 	// -----------------------------------	
 	if(size_resSum1>size_resSum2)//Find bigger size between resSum1 and resSum2
 		max=size_resSum1;
@@ -129,11 +129,11 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 	prod(resSum1,resSum2,max,prod_resSum, &size_prod_resSum); 
 	// -----------------------------------	
 	correctIndex(&size_prod_resSum);
-	printf("ProdResSum(%d)= ",size_prod_resSum);
+	/*printf("ProdResSum(%d)= ",size_prod_resSum);
 	for(i=size_prod_resSum-1;i>=0;i--){
 		printf("%lld ",prod_resSum[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 	// -----------------------------------
 	if(size_prodHigh>size_prodLow)//Find bigger size between resSum1 and resSum2
 		max=size_prodHigh;
@@ -142,20 +142,20 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 	sum(prodLow, prodHigh, max, sumHiLo, &size_sumHiLo);
 	// -----------------------------------
 	correctIndex(&size_sumHiLo);	
-	printf("SumHiLo(%d)= ",size_sumHiLo);
+	/*printf("SumHiLo(%d)= ",size_sumHiLo);
 	for(i=size_sumHiLo-1;i>=0;i--){
 		printf("%lld ",sumHiLo[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 	// -----------------------------------	
 	dif(prod_resSum, sumHiLo, size_prod_resSum, prodMid,&size_prodMid);
 	// -----------------------------------
 	correctIndex(&size_prodMid);		
-	printf("ProdMid(%d)= ",size_prodMid);
+	/*printf("ProdMid(%d)= ",size_prodMid);
 	for(i=size_prodMid-1;i>=0;i--){
 		printf("%lld ",prodMid[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 	// -----------------------------------	
 	
 	if (size_inp == 2){
@@ -181,15 +181,15 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 		if(i==-1)
 			*size_ans = 1;
 
-		printf(" ------- Result (%d): ",*size_ans);
+		/*printf(" ------- Result (%d): ",*size_ans);
 		for(i=3;i>=0;i--){
 			printf(" %lld",ans[i]);
 		}
-		printf("\n");
+		printf("\n");*/
 	}
 
 	if (size_inp == 4){
-		printf("================= \n");
+		/*printf("================= \n");
 		printf("ProdLow(%d)= ",size_prodLow);
 		for(i=size_prodLow-1;i>=0;i--){
 			printf("%lld ",prodLow[i]);
@@ -206,7 +206,7 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 		for(i=size_prodHigh-1;i>=0;i--){
 			printf("%lld ",prodHigh[i]);
 		}
-		printf("\n");
+		printf("\n");*/
 
 		ans[0]=prodLow[0];
 		ans[1]=((size_prodLow>1)?prodLow[1]:0);
@@ -242,8 +242,84 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 			break;
 			}
 		}
-		printf(" ------- Result (%d): ",*size_ans);
+		/*printf(" ------- Result (%d): ",*size_ans);
 		for(i=7;i>=0;i--){
+			printf(" %lld",ans[i]);
+		}
+		printf("\n");*/
+	}
+
+	if (size_inp == 8){
+		/*printf("================= \n");
+		printf("ProdLow(%d)= ",size_prodLow);
+		for(i=size_prodLow-1;i>=0;i--){
+			printf("%lld ",prodLow[i]);
+		}
+		printf("\n");
+
+		printf("ProdMid(%d)= ",size_prodMid);
+		for(i=size_prodMid-1;i>=0;i--){
+			printf("%lld ",prodMid[i]);
+		}
+		printf("\n");
+
+		printf("ProdHigh(%d)= ", size_prodHigh);
+		for(i=size_prodHigh-1;i>=0;i--){
+			printf("%lld ",prodHigh[i]);
+		}
+		printf("\n");*/
+
+		ans[0]=prodLow[0];
+		ans[1]=((size_prodLow>1)?prodLow[1]:0);
+		ans[2]=((size_prodLow>2)?prodLow[2]:0);
+		ans[3]=((size_prodLow>3)?prodLow[3]:0);
+		
+
+		ans[4]=prodMid[0]+((size_prodLow>4)?prodLow[4]:0);
+		carry=ans[4]/100000000;
+		ans[4]=ans[4]%100000000;
+		ans[5]=((size_prodMid>1)?prodMid[1]:0)+((size_prodLow>5)?prodLow[5]:0)+carry;
+		carry=ans[5]/100000000;
+		ans[5]=ans[5]%100000000;
+		ans[6]=((size_prodMid>2)?prodMid[2]:0)+((size_prodLow>6)?prodLow[6]:0)+carry;
+		carry=ans[6]/100000000;
+		ans[6]=ans[6]%100000000;
+		ans[7]=((size_prodMid>3)?prodMid[3]:0)+((size_prodLow>7)?prodLow[7]:0)+carry;
+		carry=ans[7]/100000000;
+		ans[7]=ans[7]%100000000;
+
+		ans[8]=prodHigh[0]+((size_prodMid>4)?prodMid[4]:0)+carry;
+		carry=ans[8]/100000000;
+		ans[8]=ans[8]%100000000;
+		ans[9]=((size_prodHigh>1)?prodHigh[1]:0)+((size_prodMid>5)?prodMid[5]:0)+carry;
+		carry=ans[9]/100000000;
+		ans[9]=ans[9]%100000000;
+		ans[10]=((size_prodHigh>2)?prodHigh[2]:0)+((size_prodMid>6)?prodMid[6]:0)+carry;
+		carry=ans[10]/100000000;
+		ans[10]=ans[10]%100000000;
+		ans[11]=((size_prodHigh>3)?prodHigh[3]:0)+((size_prodMid>7)?prodMid[7]:0)+carry;
+		carry=ans[11]/100000000;
+		ans[11]=ans[11]%100000000;
+
+		ans[12]=((size_prodHigh>4)?prodHigh[4]:0)+((size_prodMid>8)?prodMid[8]:0)+carry;
+		carry=ans[12]/100000000;
+		ans[12]=ans[12]%100000000;
+		ans[13]=((size_prodHigh>5)?prodHigh[5]:0)+carry;
+		carry=ans[13]/100000000;
+		ans[13]=ans[13]%100000000;
+		ans[14]=((size_prodHigh>6)?prodHigh[6]:0)+carry;
+		carry=ans[14]/100000000;
+		ans[14]=ans[14]%100000000;
+		ans[15]=((size_prodHigh>7)?prodHigh[7]:0)+carry;
+
+		for(i=15;i>=0;i--){
+			if(ans[i]!=0){
+				*size_ans = i+1;
+			break;
+			}
+		}
+		printf(" ------- Result (%d): ",*size_ans);
+		for(i=15;i>=0;i--){
 			printf(" %lld",ans[i]);
 		}
 		printf("\n");
@@ -254,51 +330,51 @@ int prod(long long *num1, long long *num2, int size_inp, long long* ans, int* si
 
 int main(int argc, char const *argv[])
 {
-	long long a1[4],a2[4],r[8];
+	long long a1[8],a2[8],r[16];
 	int i=0, size_ans;
 
-	for(i=0;i<7;i++)
+	for(i=0;i<16;i++)
 		r[i]=0;
 
-	/*a2[0]=66967627;
+	a2[0]=66967627;
 	a2[1]=99595749;
 	a2[2]=24709369;
 	a2[3]=62497757;
 	a2[4]=74713526;
 	a2[5]=23536028;
 	a2[6]=28459045;
-	a2[7]=27182818;*/
-	a2[0]=66967627;// a2[3]_a2[2]+ a2[1]_a2[0] : 1 62093506 91676996 // ProdLow: 50851806 76787640 19528065 82723184
-	a2[1]=99595749;
-	a2[2]=24709369;
-	a2[3]=62497757;//Prod : 87437139 09007068 76098025 97594884
+	a2[7]=27182818;
+	//a2[0]=66967627;// a2[3]_a2[2]+ a2[1]_a2[0] : 1 62093506 91676996 // ProdLow: 50851806 76787640 19528065 82723184
+	//a2[1]=99595749;
+	//a2[2]=24709369;
+	//a2[3]=62497757;//Prod : 87437139 09007068 76098025 97594884
 	/*a2[4]=0;
 	a2[5]=0;
 	a2[6]=0;
 	a2[7]=0;*/
 
-	/*a1[0]=74944592;
+	a1[0]=74944592;
 	a1[1]=51058209;
 	a1[2]=16939937;
 	a1[3]=2884197;
 	a1[4]=33832795;
 	a1[5]=23846264;
 	a1[6]=53589793;
-	a1[7]=31415926;*/
-	a1[0]=74944592;// a1[3]_a1[2] + a1[1]_a1[0] : 53942406 91884529 // ProdHigh: 1802558 54545876 58348753 54169753
-	a1[1]=51058209;
-	a1[2]=16939937;
-	a1[3]=2884197;// ProdMid=34782773 77673551 98221206 60701947
+	a1[7]=31415926;
+	//a1[0]=74944592;// a1[3]_a1[2] + a1[1]_a1[0] : 53942406 91884529 // ProdHigh: 1802558 54545876 58348753 54169753
+	//a1[1]=51058209;
+	//a1[2]=16939937;
+	//a1[3]=2884197;// ProdMid=34782773 77673551 98221206 60701947
 	/*a1[4]=0;
 	a1[5]=0;
 	a1[6]=0;
 	a1[7]=0;*/
 
-	prod(a1,a2,4,r,&size_ans);
+	prod(a1,a2,8,r,&size_ans);
 
 	printf("Final= ");
 	for(i=size_ans-1;i>=0;i--)
-		printf("%lld\n", r[i]);
+		printf("%lld ", r[i]);
 	printf("\n");
 	return 0;
 }
